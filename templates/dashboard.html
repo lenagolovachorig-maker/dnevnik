@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <!-- Форма добавления -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">Новая запись</div>
+            <div class="card-body">
+                <form method="POST">
+                    <textarea name="content" class="form-control mb-2" rows="5" placeholder="О чем думаете?" required></textarea>
+                    <input type="text" name="tags" class="form-control mb-2" placeholder="Теги (через запятую)">
+                    <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список записей и Поиск -->
+    <div class="col-md-8">
+        <form method="GET" class="d-flex mb-3">
+            <input type="text" name="q" class="form-control me-2" placeholder="Поиск по тексту или тегам..." value="{{ search_query or '' }}">
+            <button type="submit" class="btn btn-outline-secondary">Найти</button>
+            {% if search_query %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-danger ms-2">Сброс</a>
+            {% endif %}
+        </form>
+
+        {% for entry in entries %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <p class="card-text">{{ entry.content }}</p>
+                {% if entry.tags %}
+                    <div class="mt-2">
+                        {% for tag in entry.tags.split(',') %}
+                            <span class="badge bg-info text-dark">#{{ tag.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="text-muted float-end">{{ entry.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">Записей пока нет.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
